@@ -103,6 +103,7 @@ public class MongeezRunner implements InitializingBean {
 
     public void setCustomCommands(Map<String, CustomMongeezCommand> customCommands) throws BeansException {
         this.customCommands = customCommands;
+    }
 
     public void setAuthDb(String authDb) {
         this.authDb = authDb;
