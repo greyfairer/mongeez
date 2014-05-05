@@ -13,10 +13,14 @@ package org.mongeez;
 
 import com.mongodb.Mongo;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 
 import org.mongeez.reader.ChangeSetFileProvider;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * @author oleksii
@@ -30,8 +34,10 @@ public class MongeezRunner implements InitializingBean {
     
     private String userName;
     private String passWord;
+    private String authDb;
     
     private ChangeSetFileProvider changeSetFileProvider;
+    private Map<String, CustomMongeezCommand> customCommands;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -40,7 +46,7 @@ public class MongeezRunner implements InitializingBean {
         }
     }
 
-    public void execute() {
+    public void execute() throws IOException {
         Mongeez mongeez = new Mongeez();
         mongeez.setMongo(mongo);
         mongeez.setDbName(dbName);
@@ -50,11 +56,12 @@ public class MongeezRunner implements InitializingBean {
             mongeez.setFile(file);
             
             if(!StringUtils.isEmpty(userName) && !StringUtils.isEmpty(passWord)){
-            	MongoAuth auth = new MongoAuth(userName, passWord);
+            	MongoAuth auth = new MongoAuth(userName, passWord, authDb);
                 mongeez.setAuth(auth);
             }
         }
 
+        mongeez.setCustomCommands(customCommands);
         mongeez.process();
     }
 
@@ -93,5 +100,12 @@ public class MongeezRunner implements InitializingBean {
 	public void setPassWord(String passWord) {
 		this.passWord = passWord;
 	}
-    
+
+    public void setCustomCommands(Map<String, CustomMongeezCommand> customCommands) throws BeansException {
+        this.customCommands = customCommands;
+    }
+
+    public void setAuthDb(String authDb) {
+        this.authDb = authDb;
+    }
 }
