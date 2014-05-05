@@ -33,13 +33,8 @@
         <repository>
             <id>redsys-repo-releases</id>
             <name>redsys-repo-releases</name>
-            <url>${releases.url}</url>
+            <url>http://redsysbuild.persgroep.be:8081/artifactory/ext-releases-local/</url>
         </repository>
-        <snapshotRepository>
-            <id>redsys-repo-snapshots</id>
-            <name>redsys-repo-snapshots</name>
-            <url>${snapshots.url}</url>
-        </snapshotRepository>
     </distributionManagement>
 
     <developers>
