@@ -38,16 +38,23 @@ public class MongeezDao {
     public MongeezDao(Mongo mongo, String databaseName, MongoAuth auth) {
 
         if (auth != null){
-            if(auth.getAuthDb() == null || auth.getAuthDb().equals(databaseName))
-            {
+            if(auth.getAuthDb() == null || auth.getAuthDb().equals(databaseName)) {
                 db = mongo.getDB(databaseName);
-                db.authenticate(auth.getUsername(), auth.getPassword().toCharArray());
+                if(!db.isAuthenticated()) {
+                    if (!db.authenticate(auth.getUsername(), auth.getPassword().toCharArray())) {
+                        throw new IllegalArgumentException("Failed to authenticate to database [" + databaseName + "]");
+                    }
+                }
             }
             else
             {
-                DB authDb = mongo.getDB(auth.getAuthDb());
-                authDb.authenticate(auth.getUsername(), auth.getPassword().toCharArray());
                 db = mongo.getDB(databaseName);
+                if(!db.isAuthenticated()) {
+                    DB authDb = mongo.getDB(auth.getAuthDb());
+                    if (!authDb.authenticate(auth.getUsername(), auth.getPassword().toCharArray())) {
+                        throw new IllegalArgumentException("Failed to authenticate to database [" + auth.getAuthDb() + "]");
+                    }
+                }
             }
         }
         else
@@ -67,7 +74,7 @@ public class MongeezDao {
     private void addTypeToUntypedRecords() {
         DBObject q = new QueryBuilder().put("type").exists(false).get();
         BasicDBObject o = new BasicDBObject("$set", new BasicDBObject("type", RecordType.changeSetExecution.name()));
-        getMongeezCollection().update(q, o, false, true, WriteConcern.SAFE);
+        getMongeezCollection().update(q, o, false, true, WriteConcern.MAJORITY);
     }
 
     private void loadConfigurationRecord() {
