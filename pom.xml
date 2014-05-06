@@ -65,12 +65,13 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-digester3</artifactId>
             <version>3.2</version>
+            <classifier>with-deps</classifier>
         </dependency>
 
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
-            <version>2.11.1</version>
+            <version>2.11.4</version>
         </dependency>
 
         <dependency>
