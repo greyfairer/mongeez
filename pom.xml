@@ -9,7 +9,7 @@
     
     <groupId>org.mongeez</groupId>
     <artifactId>mongeez</artifactId>
-    <version>0.9.5-beta-2</version>
+    <version>1.0-dpp-1</version>
     <packaging>jar</packaging>
 
     <name>Mongeez</name>
@@ -116,6 +116,12 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>6.8</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.8.5</version>
             <scope>test</scope>
         </dependency>
 
