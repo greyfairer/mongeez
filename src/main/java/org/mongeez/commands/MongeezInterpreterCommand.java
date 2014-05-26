@@ -41,7 +41,9 @@ public class MongeezInterpreterCommand implements CustomMongeezCommand {
                     LOGGER.warn("Unknown operation: {}", key);
                 }
             }
-            LOGGER.warn("Unparseable property: {}", key);
+            else {
+                LOGGER.warn("Unparseable property: {}", key);
+            }
         }
     }
 
