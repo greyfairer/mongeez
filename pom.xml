@@ -66,6 +66,20 @@
             <artifactId>commons-digester3</artifactId>
             <version>3.2</version>
             <classifier>with-deps</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>cglib</groupId>
+                    <artifactId>cglib</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-beanutils</groupId>
+                    <artifactId>commons-beanutils</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
