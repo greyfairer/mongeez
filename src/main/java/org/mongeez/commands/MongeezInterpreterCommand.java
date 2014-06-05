@@ -37,6 +37,8 @@ public class MongeezInterpreterCommand implements CustomMongeezCommand {
                     insertCollection(dao, collection, value);
                 } else if ("ensureIndex".equals(operation)) {
                     ensureIndex(dao, collection, value);
+                } else if ("remove".equals(operation)) {
+                    removeFromCollection(dao, collection, value);
                 } else {
                     LOGGER.warn("Unknown operation: {}", key);
                 }
@@ -57,6 +59,11 @@ public class MongeezInterpreterCommand implements CustomMongeezCommand {
     private void insertCollection(MongeezDao dao, String collection, String value) {
         final DBObject params = (DBObject) JSON.parse(value);
         dao.insertCollection(collection, params);
+    }
+
+    private void removeFromCollection(MongeezDao dao, String collection, String value) {
+        final DBObject params = (DBObject) JSON.parse(value);
+        dao.removeFromCollection(collection, params);
     }
 
     private void updateCollection(MongeezDao dao, String collection, String value) {
