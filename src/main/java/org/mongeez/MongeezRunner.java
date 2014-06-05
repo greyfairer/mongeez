@@ -16,6 +16,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.mongeez.commands.CustomMongeezCommand;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 
 import org.mongeez.reader.ChangeSetFileProvider;
@@ -32,7 +34,8 @@ public class MongeezRunner implements InitializingBean {
     private Mongo mongo;
     private String dbName;
     private Resource file;
-    
+    private String context;
+
     private String userName;
     private String passWord;
     private String authDb;
@@ -51,6 +54,7 @@ public class MongeezRunner implements InitializingBean {
         Mongeez mongeez = new Mongeez();
         mongeez.setMongo(mongo);
         mongeez.setDbName(dbName);
+        mongeez.setContext(context);
         if (changeSetFileProvider != null) {
             mongeez.setChangeSetFileProvider(changeSetFileProvider);
         } else {
@@ -84,6 +88,10 @@ public class MongeezRunner implements InitializingBean {
 
     public void setFile(Resource file) {
         this.file = file;
+    }
+
+    public void setContext(String context) {
+        this.context = context;
     }
 
     public void setChangeSetFileProvider(ChangeSetFileProvider changeSetFileProvider) {

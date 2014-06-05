@@ -25,4 +25,6 @@ public interface MongeezDao {
     void logChangeSet(ChangeSet changeSet);
 
     void ensureIndex(String collection, DBObject params, DBObject options);
+
+    void removeFromCollection(String collection, DBObject params);
 }
