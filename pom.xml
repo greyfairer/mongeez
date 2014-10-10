@@ -9,7 +9,7 @@
     
     <groupId>org.mongeez</groupId>
     <artifactId>mongeez</artifactId>
-    <version>1.0-dpp-3</version>
+    <version>1.0-dpp-4</version>
     <packaging>jar</packaging>
 
     <name>Mongeez</name>
