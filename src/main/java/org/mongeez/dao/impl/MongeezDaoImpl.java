@@ -18,7 +18,6 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import com.mongodb.QueryBuilder;
-import com.mongodb.WriteConcern;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 import org.mongeez.MongoAuth;
@@ -77,7 +76,7 @@ public class MongeezDaoImpl implements MongeezDao {
     private void addTypeToUntypedRecords() {
         DBObject q = new QueryBuilder().put("type").exists(false).get();
         BasicDBObject o = new BasicDBObject("$set", new BasicDBObject("type", RecordType.changeSetExecution.name()));
-        getMongeezCollection().update(q, o, false, true, WriteConcern.JOURNALED);
+        getMongeezCollection().update(q, o, false, true);
     }
 
     private void loadConfigurationRecord() {
@@ -96,7 +95,7 @@ public class MongeezDaoImpl implements MongeezDao {
                                 .append("type", RecordType.configuration.name())
                                 .append("supportResourcePath", true);
             }
-            getMongeezCollection().insert(configRecord, WriteConcern.SAFE);
+            getMongeezCollection().insert(configRecord);
         }
         Object supportResourcePath = configRecord.get("supportResourcePath");
 
@@ -158,7 +157,7 @@ public class MongeezDaoImpl implements MongeezDao {
             object.append(attribute.name(), attribute.getAttributeValue(changeSet));
         }
         object.append("date", DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.format(System.currentTimeMillis()));
-        getMongeezCollection().insert(object, WriteConcern.SAFE);
+        getMongeezCollection().insert(object);
     }
 
     @Override
