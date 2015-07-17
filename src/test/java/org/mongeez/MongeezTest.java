@@ -12,13 +12,13 @@
 
 package org.mongeez;
 
-import static org.testng.Assert.assertEquals;
-
 import com.mongodb.DB;
 import com.mongodb.Mongo;
 import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
 
 @Test
 public class MongeezTest {
@@ -70,7 +70,7 @@ public class MongeezTest {
         assertEquals(db.getCollection("mongeez").count(), 2);
     }
 
-    @Test(groups = "dao", expectedExceptions = com.mongodb.CommandFailureException.class)
+    @Test(groups = "dao", expectedExceptions = com.mongodb.MongoException.class)
     public void testFailOnError_True() throws Exception {
         Mongeez mongeez = create("mongeez_fail_fail.xml");
         mongeez.process();
