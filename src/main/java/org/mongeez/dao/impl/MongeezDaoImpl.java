@@ -19,11 +19,10 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
 import com.mongodb.QueryBuilder;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.mongeez.MongoAuth;
 import org.mongeez.commands.ChangeSet;
 import org.mongeez.dao.ChangeSetAttribute;
 import org.mongeez.dao.MongeezDao;
@@ -38,58 +37,16 @@ public class MongeezDaoImpl implements MongeezDao {
     private DB db;
     private List<ChangeSetAttribute> changeSetAttributes;
 
-    public MongeezDaoImpl(Mongo mongo, String databaseName) {
-        this(mongo, databaseName, null);
-    }
-
-    public MongeezDaoImpl(Mongo mongo, String databaseName, MongoAuth auth) {
+    public MongeezDaoImpl(MongoClient mongo, String databaseName) {
 
         mongoScope = MongoRuntime.createMongoScope();
 
-        if (auth != null){
-            if(auth.getAuthDb() == null || auth.getAuthDb().equals(databaseName)) {
-                db = mongo.getDB(databaseName);
-                if(!db.isAuthenticated()) {
-                    if (!db.authenticate(auth.getUsername(), auth.getPassword().toCharArray())) {
-                        throw new IllegalArgumentException("Failed to authenticate to database [" + databaseName + "]");
-                    }
-                }
-                final String script = String.format("db = connect('%s:%s/%s','%s','%s')",
-                                                    mongo.getAddress().getHost(),
-                                                    mongo.getAddress().getPort(),
-                                                    databaseName,
-                                                    auth.getUsername(),
-                                                    auth.getPassword());
-                MongoRuntime.call(new MongoScriptAction(mongoScope, "connect", script));
-            }
-            else
-            {
-                db = mongo.getDB(databaseName);
-                if(!db.isAuthenticated()) {
-                    DB authDb = mongo.getDB(auth.getAuthDb());
-                    if (!authDb.authenticate(auth.getUsername(), auth.getPassword().toCharArray())) {
-                        throw new IllegalArgumentException("Failed to authenticate to database [" + auth.getAuthDb() + "]");
-                    }
-                }
-                final String script = String.format("db = connect('%s:%s/%s','%s','%s')",
-                                                    mongo.getAddress().getHost(),
-                                                    mongo.getAddress().getPort(),
-                                                    auth.getAuthDb(),
-                                                    auth.getUsername(),
-                                                    auth.getPassword());
-                MongoRuntime.call(new MongoScriptAction(mongoScope, "connect", script));
-                MongoRuntime.call(new MongoScriptAction(mongoScope, "sibling", String.format("db = db.getSiblingDB('%s')", databaseName)));
-            }
-        }
-        else
-        {
-            db = mongo.getDB(databaseName);
-            final String script = String.format("db = connect('%s:%s/%s')",
-                                                mongo.getAddress().getHost(),
-                                                mongo.getAddress().getPort(),
-                                                databaseName);
-            MongoRuntime.call(new MongoScriptAction(mongoScope, "connect", script));
-        }
+        db = mongo.getDB(databaseName);
+        final String script = String.format("db = connect('%s:%s/%s')",
+                                            mongo.getAddress().getHost(),
+                                            mongo.getAddress().getPort(),
+                                            databaseName);
+        MongoRuntime.call(new MongoScriptAction(mongoScope, "connect", script));
         configure();
     }
 
@@ -154,7 +111,7 @@ public class MongeezDaoImpl implements MongeezDao {
         for (ChangeSetAttribute attribute : changeSetAttributes) {
             keys.append(attribute.name(), 1);
         }
-        getMongeezCollection().ensureIndex(keys);
+        getMongeezCollection().createIndex(keys);
     }
 
     @Override
@@ -198,8 +155,8 @@ public class MongeezDaoImpl implements MongeezDao {
     }
 
     @Override
-    public void ensureIndex(String collection, DBObject keys, DBObject options) {
-        getDb().getCollection(collection).ensureIndex(keys, options);
+    public void createIndex(String collection, DBObject keys, DBObject options) {
+        getDb().getCollection(collection).createIndex(keys, options);
     }
 
     @Override

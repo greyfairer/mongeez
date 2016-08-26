@@ -13,7 +13,7 @@
 package org.mongeez;
 
 import com.mongodb.DB;
-import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
 import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -23,12 +23,12 @@ import static org.testng.Assert.assertEquals;
 @Test
 public class MongeezTest {
     private String dbName = "test_mongeez";
-    private Mongo mongo;
+    private MongoClient mongo;
     private DB db;
 
     @BeforeMethod
     protected void setUp() throws Exception {
-        mongo = new Mongo();
+        mongo = new MongoClient();
         db = mongo.getDB(dbName);
 
         db.dropDatabase();
@@ -37,7 +37,7 @@ public class MongeezTest {
     private Mongeez create(String path) {
         Mongeez mongeez = new Mongeez();
         mongeez.setFile(new ClassPathResource(path));
-        mongeez.setMongo(mongo);
+        mongeez.setMongoClient(mongo);
         mongeez.setDbName(dbName);
         return mongeez;
     }

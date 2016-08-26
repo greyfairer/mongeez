@@ -12,6 +12,7 @@
 
 package org.mongeez;
 
+import com.mongodb.MongoClient;
 import org.mongeez.commands.ChangeSet;
 import org.mongeez.commands.Command;
 import org.mongeez.commands.CustomMongeezCommand;
@@ -20,8 +21,6 @@ import org.mongeez.dao.impl.MongeezDaoImpl;
 import org.mongeez.reader.ChangeSetFileProvider;
 import org.mongeez.reader.ChangeSetReaderFactory;
 import org.mongeez.reader.FilesetXMLChangeSetFileProvider;
-
-import com.mongodb.Mongo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -35,16 +34,15 @@ import java.util.Map;
 public class Mongeez {
     private final static Logger logger = LoggerFactory.getLogger(Mongeez.class);
 
-    private Mongo mongo = null;
+    private MongoClient mongoClient = null;
     private String dbName;
-    private MongoAuth auth = null;
     private ChangeSetFileProvider changeSetFileProvider;
     private String context = null;
     private Map<String, CustomMongeezCommand> customCommands;
 
     public void process() throws IOException {
         List<ChangeSet> changeSets = getChangeSets();
-        MongeezDao dao = new MongeezDaoImpl(mongo, dbName, auth);
+        MongeezDao dao = new MongeezDaoImpl(mongoClient, dbName);
         new ChangeSetExecutor(dao, context, customCommands).execute(changeSets);
     }
 
@@ -77,16 +75,12 @@ public class Mongeez {
         }
     }
 
-    public void setMongo(Mongo mongo) {
-        this.mongo = mongo;
+    public void setMongoClient(MongoClient mongoClient) {
+        this.mongoClient = mongoClient;
     }
 
     public void setDbName(String dbName) {
         this.dbName = dbName;
-    }
-
-    public void setAuth(MongoAuth auth) {
-        this.auth = auth;
     }
 
     /**

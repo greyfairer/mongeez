@@ -11,16 +11,12 @@
  */
 package org.mongeez;
 
-import com.mongodb.Mongo;
-import org.apache.commons.lang3.StringUtils;
+import com.mongodb.MongoClient;
 import org.mongeez.commands.CustomMongeezCommand;
+import org.mongeez.reader.ChangeSetFileProvider;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
-
-import org.mongeez.reader.ChangeSetFileProvider;
 
 import java.io.IOException;
 import java.util.Map;
@@ -31,15 +27,11 @@ import java.util.Map;
  */
 public class MongeezRunner implements InitializingBean {
     private boolean executeEnabled = false;
-    private Mongo mongo;
+    private MongoClient mongoClient;
     private String dbName;
     private Resource file;
     private String context;
 
-    private String userName;
-    private String passWord;
-    private String authDb;
-    
     private ChangeSetFileProvider changeSetFileProvider;
     private Map<String, CustomMongeezCommand> customCommands;
 
@@ -52,18 +44,13 @@ public class MongeezRunner implements InitializingBean {
 
     public void execute() throws IOException {
         Mongeez mongeez = new Mongeez();
-        mongeez.setMongo(mongo);
+        mongeez.setMongoClient(mongoClient);
         mongeez.setDbName(dbName);
         mongeez.setContext(context);
         if (changeSetFileProvider != null) {
             mongeez.setChangeSetFileProvider(changeSetFileProvider);
         } else {
             mongeez.setFile(file);
-            
-            if(!StringUtils.isEmpty(userName) && !StringUtils.isEmpty(passWord)){
-            	MongoAuth auth = new MongoAuth(userName, passWord, authDb);
-                mongeez.setAuth(auth);
-            }
         }
 
         mongeez.setCustomCommands(customCommands);
@@ -78,8 +65,8 @@ public class MongeezRunner implements InitializingBean {
         this.executeEnabled = executeEnabled;
     }
 
-    public void setMongo(Mongo mongo) {
-        this.mongo = mongo;
+    public void setMongoClient(MongoClient mongoClient) {
+        this.mongoClient = mongoClient;
     }
 
     public void setDbName(String dbName) {
@@ -102,19 +89,7 @@ public class MongeezRunner implements InitializingBean {
         return dbName;
     }
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	public void setPassWord(String passWord) {
-		this.passWord = passWord;
-	}
-
     public void setCustomCommands(Map<String, CustomMongeezCommand> customCommands) throws BeansException {
         this.customCommands = customCommands;
-    }
-
-    public void setAuthDb(String authDb) {
-        this.authDb = authDb;
     }
 }
